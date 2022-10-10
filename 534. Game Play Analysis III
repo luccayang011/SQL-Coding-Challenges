@@ -1,0 +1,15 @@
+# Write your MySQL query statement below
+
+# OUTPUT: total #games played by each player UNTIL that date
+
+
+My Solution:
+SELECT player_id, event_date, SUM(games_played) OVER(PARTITION BY player_id ORDER BY event_date) AS games_played_so_far
+FROM Activity
+
+
+Code explaination:
+Usually when the result has something to do with neighbors, we should think of window function.
+Here we can think of using SUM. 
+The trickiest part is the ORDER BY  inside this over cell. If we don't use it, then it will simply sum up all the games no matter the date. 
+This ORDER BY actually tells the machine that for each record, it should calculate then sum until that date.
