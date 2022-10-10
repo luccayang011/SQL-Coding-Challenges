@@ -1,0 +1,22 @@
+# OUTPUT: seat_id
+# CONDITION: consectuive available (continue to be 1), ascednding
+
+# My solution:
+SELECT seat_id
+FROM (
+SELECT seat_id, free, LAG(free) OVER () AS previous, Lead(free) OVER () AS after
+FROM Cinema
+) AS temp1
+WHERE (free = 1 ) AND (previous OR after = 1)
+ORDER BY seat_id 
+
+
+Solution Explanation:
+consectuive available means the column called 'free' has continued to be 1. This leads me to think of the window function, specfically lead or lag. 
+However, after produced the sample tables, I found if simplely using lead or lag, there will always be one data point missing -- either the start or the end of this sequence. 
+After referring to others' solution, I found that I can actually use lag and lead together, and then using certain conditions to identify those seats.
+The condition defining progress is a little tricky. 
+First, to be available, itself has to be 1.
+Second, to be consecutive, its previous or after has to be 1 too.
+The relationship of this two conditions should be AND!!
+Finally, don't forget to make the seat it in asecnding order.
