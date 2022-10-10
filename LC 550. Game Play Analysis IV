@@ -1,0 +1,48 @@
+# Write your MySQL query statement below
+
+# OUTPUT: A number which is a fraction of players who logged again the next day after they logged in their first day
+# Condition: round to 2 decimals
+
+# total player number = count distinct player id
+# player who logged again -- if lead - current  = 1, true, count these players' number
+
+
+
+
+WRONG ANSWER when misunderstand, did not check if if's first log in time:
+# SELECT COUNT(*) AS total FROM
+# (SELECT DISTINCT(player_id) FROM Activity) AS t3;
+
+# SELECT ROUND(COUNT(*)/(SELECT COUNT(*) AS total FROM (SELECT DISTINCT(player_id) FROM Activity) AS t3) ,2 ) AS fraction
+
+# FROM 
+
+# (SELECT DISTINCT(player_id) FROM
+# (
+#     SELECT player_id, MIN(event_date), LEAD(event_date) OVER() AS after, LEAD(event_date) OVER() - event_date AS diff
+#     FROM Activity) AS t1
+# WHERE t1.diff = 1) AS t2
+
+
+
+
+MY SOLUTION,inspired by https://leetcode.com/problems/game-play-analysis-iv/solutions/2247885/mysql-solution-faster-92-13-cte-explanation/:
+
+WITH t2 AS
+(SELECT DISTINCT(a.player_id) FROM Activity a
+INNER JOIN (
+SELECT player_id, MIN(event_date) AS first, DATE_ADD(MIN(event_date), INTERVAL 1 DAY) AS next
+FROM Activity
+GROUP BY player_id) AS t1
+ON a.player_id = t1.player_id AND a.event_date = t1.next) 
+
+SELECT ROUND(COUNT(*)/(SELECT COUNT(*) AS total FROM (SELECT DISTINCT(player_id) FROM Activity) AS t3),2) AS fraction
+FROM t2
+
+
+
+Code Explanation:
+to get the fraction, we need two numbers: the total number of players & the number of players who logged in again the NEXT day after they FIRST LOG IN.
+Initally I thought the first log in date could be any date as long as they logged in the next day. 
+After reading others solution I found that it has to be FIRST LOG IN DATE. Thus a min function is useful here.
+Inspired by the post, I use CTE function here to keep the answer neat.
