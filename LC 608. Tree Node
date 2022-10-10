@@ -1,0 +1,29 @@
+ OUTPUT: id, node type(a secondary column)
+ Condition: 
+  root - parent is null
+  inner - doesn't have parent or children
+  leaf - doesn't have children
+ 
+ My solution:
+ SELECT id,
+    CASE
+        WHEN p_id IS NULL THEN 'Root'
+        WHEN id IN (SELECT p_id FROM Tree) THEN 'Inner'
+        ELSE 'Leaf'
+        END AS type
+FROM Tree
+
+
+
+Code explanation:
+This is like an if-else condition statement, we can go with the easy one (root & leaf) and then the rest would belong to inner nodes.
+To use this, we can think about using case-when statement in SQL. For the syntax, I referred to https://leetcode.com/problems/tree-node/solutions/1991951/mysql-fast-and-simple/
+structure of using it:
+
+SELECT ...,
+  CASE
+    WHEN ... THEN
+    WHEN ... THEN
+    ELSE ...
+    END AS NEW_COLUMN_NAME
+ FROM
