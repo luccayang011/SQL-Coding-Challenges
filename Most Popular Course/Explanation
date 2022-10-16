@@ -1,0 +1,6 @@
+# Most-popular-course
+A modification of an online test.
+
+Changed the language from mysql to postgresql.(tested in pgAdmin)
+
+Insert fake data to test the query.
